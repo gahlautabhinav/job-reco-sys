@@ -1,0 +1,8 @@
+.ipynb_checkpoints/
+
+backend/__pycache__/
+backend/models/
+backend/job_descriptions.csv
+*.pkl
+*.joblib
+*.csv
