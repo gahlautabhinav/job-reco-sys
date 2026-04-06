@@ -1,31 +1,44 @@
 import joblib
-import pandas as pd
-import re
 import os
+import re
+import pandas as pd
 
 from sklearn.metrics.pairwise import cosine_similarity
+from huggingface_hub import hf_hub_download
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CACHE_DIR = "/data/models"   # persistent storage in HF Spaces
 
-MODEL_DIR = os.path.join(BASE_DIR, "models")
+os.makedirs(CACHE_DIR, exist_ok=True)
 
-print("Loading saved model...")
+REPO_ID = "kaal108/job-reco-tfidf"
 
-vectorizer = joblib.load(
-    os.path.join(MODEL_DIR, "vectorizer.pkl")
+print("Downloading models...")
+
+vectorizer_path = hf_hub_download(
+    repo_id=REPO_ID,
+    filename="vectorizer.pkl",
+    cache_dir=CACHE_DIR
 )
 
-tfidf_matrix = joblib.load(
-    os.path.join(MODEL_DIR, "tfidf_matrix.pkl")
+tfidf_path = hf_hub_download(
+    repo_id=REPO_ID,
+    filename="tfidf_matrix.pkl",
+    cache_dir=CACHE_DIR
 )
 
-df = joblib.load(
-    os.path.join(MODEL_DIR, "jobs_dataframe.pkl")
+df_path = hf_hub_download(
+    repo_id=REPO_ID,
+    filename="jobs_dataframe.pkl",
+    cache_dir=CACHE_DIR
 )
 
-print("Model loaded successfully")
+print("Loading models...")
 
+vectorizer = joblib.load(vectorizer_path)
+tfidf_matrix = joblib.load(tfidf_path)
+df = joblib.load(df_path)
 
+print("Models loaded")
 # ---------------- SALARY ----------------
 def salary_in_range(job_salary, expected_salary):
     try:
